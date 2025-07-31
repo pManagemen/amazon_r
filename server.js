@@ -3,11 +3,17 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
+app.use(cors());
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected'))
-  .catch(err => console.error('Error:', err));
+// Gunakan variabel lingkungan dari Railway
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
+// Schema untuk data review Amazon
 const reviewSchema = new mongoose.Schema({
   user_name: String,
   review_title: String,
@@ -15,25 +21,22 @@ const reviewSchema = new mongoose.Schema({
   img_link: String,
   product_link: String
 });
-app.get('/api/reviews', async (req, res) => {
-  try {
-    const data = await Makanan.find().limit(20);
-    res.json(data);
-  } catch (err) {
-    console.error('❌ Error saat fetch data:', err); // Tambahkan ini
-    res.status(500).json({ message: 'Server error', error: err.message || err });
-  }
-});
 
-const Review = mongoose.model('Review', reviewSchema);
+const Review = mongoose.model('Review', reviewSchema, 'review'); // Koleksi = 'review'
+
+// Endpoint API
 app.get('/api/reviews', async (req, res) => {
   try {
     const reviews = await Review.find().limit(20);
     res.json(reviews);
   } catch (err) {
-    res.status(500).json({ message: 'Server error', error: err });
+    console.error('❌ Error saat fetch data:', err);
+    res.status(500).json({ message: 'Server error', error: err.message || err });
   }
 });
 
+// Jalankan server
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
+});
