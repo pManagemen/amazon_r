@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Amazon Reviews</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 10px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      padding: 15px;
+      margin-bottom: 15px;
+      display: flex;
+      gap: 15px;
+    }
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .info {
+      flex: 1;
+    }
+    .info h3 {
+      margin: 0 0 5px;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Amazon Product Reviews</h1>
+  <input type="text" id="searchInput" placeholder="Cari review... (nama, judul, isi)">
+  <div id="reviews"></div>
+
+  <script>
+    let allReviews = [];
+
+    // Ambil data dari server
+    fetch('http://localhost:3000/api/reviews')
+      .then(res => res.json())
+      .then(data => {
+        allReviews = data;
+        renderReviews(allReviews);
+      });
+
+    const container = document.getElementById('reviews');
+    const searchInput = document.getElementById('searchInput');
+
+    // Fungsi render
+    function renderReviews(reviews) {
+      container.innerHTML = '';
+      if (reviews.length === 0) {
+        container.innerHTML = '<p>Tidak ada hasil.</p>';
+        return;
+      }
+
+      reviews.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${item.img_link}" alt="product">
+          <div class="info">
+            <h3>${item.review_title}</h3>
+            <p><strong>${item.user_name}</strong></p>
+            <p>${item.review_content}</p>
+            <a href="${item.product_link}" target="_blank">Lihat Produk</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Event saat mengetik
+    searchInput.addEventListener('input', function () {
+      const keyword = this.value.toLowerCase();
+      const filtered = allReviews.filter(item =>
+        item.user_name?.toLowerCase().includes(keyword) ||
+        item.review_title?.toLowerCase().includes(keyword) ||
+        item.review_content?.toLowerCase().includes(keyword)
+      );
+      renderReviews(filtered);
+    });
+  </script>
+</body>
+</html>
