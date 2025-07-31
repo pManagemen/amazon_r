@@ -44,5 +44,5 @@ app.listen(PORT, () => {
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000 // waktu tunggu maksimal 5 detik
+  serverSelectionTimeoutMS: 5000
 })
