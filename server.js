@@ -22,7 +22,7 @@ const reviewSchema = new mongoose.Schema({
   product_link: String
 });
 
-const Review = mongoose.model('Review', reviewSchema, 'review'); // Koleksi = 'review'
+const Review = mongoose.model('Review', reviewSchema, 'reviews'); // Koleksi = 'review'
 
 // Endpoint API
 app.get('/api/reviews', async (req, res) => {
