@@ -15,6 +15,15 @@ const reviewSchema = new mongoose.Schema({
   img_link: String,
   product_link: String
 });
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const data = await Makanan.find().limit(20);
+    res.json(data);
+  } catch (err) {
+    console.error('❌ Error saat fetch data:', err); // Tambahkan ini
+    res.status(500).json({ message: 'Server error', error: err.message || err });
+  }
+});
 
 const Review = mongoose.model('Review', reviewSchema);
 app.get('/api/reviews', async (req, res) => {
